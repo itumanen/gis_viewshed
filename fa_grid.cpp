@@ -2,6 +2,9 @@
 
 /* FLOW ACCUMULATION GRID METHODS */
 
+// Constructor
+// Takes in pointer to the input Grid and 
+// Calls initialization methods for value and boolean grids
 FA_Grid::FA_Grid(Grid* elevGrid) {
 
 	this->numCols = elevGrid->getNumCols();
@@ -38,6 +41,8 @@ FA_Grid::FA_Grid(Grid* elevGrid) {
 
 }
 
+// Called by constructor
+// Initializes grid values to 1, ignores if nodata
 void FA_Grid::initializeGrid(Grid* elevGrid) {
 
 	for (int i = 0; i < this->numRows; i++) {
@@ -53,6 +58,8 @@ void FA_Grid::initializeGrid(Grid* elevGrid) {
 	}
 }
 
+// Called by constructor
+// Sets all values in grid to false
 void FA_Grid::initializeEmptyGrids() {
 
 	for (int i = 0; i < this->numRows; i++) {
@@ -63,6 +70,10 @@ void FA_Grid::initializeEmptyGrids() {
 
 }
 
+// Recursive; given a pointer to a FD grid and indices
+// Recursively computes flow at that cell
+// Calls flowsInto to check if flow values from neighboring cells should
+// accumulate in given cell (i,j)
 float FA_Grid::computeFlowAt(Grid* fdGrid, int i, int j) {
 
 	if (computedGrid[i][j]) {
@@ -100,6 +111,8 @@ float FA_Grid::computeFlowAt(Grid* fdGrid, int i, int j) {
 
 }
 
+// Calls computeFlowAt for all cells in the grid that haven't already been computed
+// Ignores nodata cells
 void FA_Grid::computeFlow(Grid* fdGrid) {
 	for (int row = 0; row < this->numRows; row++) {
 		for (int col = 0; col < this->numCols; col++) {
@@ -112,6 +125,8 @@ void FA_Grid::computeFlow(Grid* fdGrid) {
 	}
 }
 
+// Called by ComputeFlowAt, returns boolean value
+// True if cell at (i + offsetX, j + offsetY) flows into (i,j)
 bool FA_Grid::flowsInto(Grid* fdGrid, int i, int j, int offsetX, int offsetY) {
 
 	if (fdGrid->getGridValueAt(i + offsetX, j + offsetY) == WEST && offsetX == 0 && offsetY == 1) {

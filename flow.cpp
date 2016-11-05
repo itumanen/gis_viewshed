@@ -16,8 +16,6 @@ int main(int argc, char** argv) {
     Grid* elevGrid;
     FD_Grid* fdGrid;
     FA_Grid* faGrid;
-
-    clock_t timestamp = clock();
     
     // Original grid
     elevGrid = new Grid(argv[1]);
@@ -32,14 +30,18 @@ int main(int argc, char** argv) {
 
     faGrid = new FA_Grid(elevGrid);
     printf("\nFlow accumulation grid\n");
+
+    // Start timer
+    clock_t timestamp = clock();
     faGrid->computeFlow(fdGrid);
 
-    char* outputFA = argv[3];
-    faGrid->writeGridToFile(outputFA);
-
+    // End timer and print computation time
     timestamp = clock() - timestamp;
     printf("Timestamp is %lu\n", timestamp);
     printf("Run time = %f\n", (float)timestamp / CLOCKS_PER_SEC);
+
+    char* outputFA = argv[3];
+    faGrid->writeGridToFile(outputFA);
 
     // delete memory from array
     elevGrid->freeGridData();

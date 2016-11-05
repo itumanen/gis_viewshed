@@ -2,6 +2,7 @@
 
 /* FLOW DIRECTION GRID METHODS */
 
+// Constructor
 FD_Grid::FD_Grid(Grid* elevGrid) {
 
 	this->numCols = elevGrid->getNumCols();
@@ -27,6 +28,10 @@ FD_Grid::FD_Grid(Grid* elevGrid) {
 
 }
 
+// Called by computeFlowDirAt
+// Given the relative coordinates of the min. elevation
+// return the direction code according to D8 model.
+// Returns NO_FLOW if coordinates are (0,0) or invalid.
 int FD_Grid::getDirectionCode(int i, int j) {
 	
 	if (i == -1) {
@@ -65,6 +70,9 @@ int FD_Grid::getDirectionCode(int i, int j) {
 	return NO_FLOW;
 }
 
+// Called by computeFlowDir
+// Looks at neighboring values and determins which has the lowest
+// elevation value.
 int FD_Grid::computeFlowDirAt(Grid* elevGrid, int i, int j) {
 
 	float minElevation = elevGrid->getGridValueAt(i, j);
@@ -111,6 +119,9 @@ int FD_Grid::computeFlowDirAt(Grid* elevGrid, int i, int j) {
 
 }
 
+// Given an elevation grid, iterates through points in grid
+// and sets the value of the fdGrid to the direction of the lowest
+// neighboring elevation. Follows D8 model.
 void FD_Grid::computeFlowDir(Grid* elevGrid) {
 	for (int row = 0; row < this->numRows; row++) {
 		for (int col = 0; col < this->numCols; col++) {

@@ -20,10 +20,15 @@ Grid::Grid() {
 	
 }
 
+
+// Constructor
+// Takes in pointer to a file name and reads in file
+// Calls readInGridFile; sets values of attributes
 Grid::Grid(char* fileName) {
 	readInGridFile(fileName);
 }
 
+// Iterates through the 2D grid array and prints values
 void Grid::printGrid(void) {
 
 	for (int row = 0; row < this->numRows; row++) {
@@ -34,8 +39,9 @@ void Grid::printGrid(void) {
 	}
 }
 
+// Prints first six lines of the grid file and attributes
+// of the grid
 void Grid::printInfo(void) {
-	// print first six lines of the file
 	printf("\nncols\t\t%d\n", this->numCols);
 	printf("nrows\t\t%d\n", this->numRows);
 	printf("xllcorner\t%f\n", this->xllCorner);
@@ -44,6 +50,8 @@ void Grid::printInfo(void) {
 	printf("NODATA_value\t%f\n\n", this->nodata_value);
 }
 
+// Takes in pointer to array of characters (file name)
+// Reads in contents of the file and sets attributes of the grid class
 void Grid::readInGridFile(char* fileName) {
 
 	FILE* f;
@@ -79,7 +87,7 @@ void Grid::readInGridFile(char* fileName) {
 
 	//read in xll corner data
 	fscanf(f, "%s", buffer);
-	if(strcmp(buffer,xllcorner) != 0) {
+	if(strcmp(buffer, xllcorner) != 0) {
 		cerr << "Error reading xll corner data" << endl;
 		exit(1);
 	}
@@ -133,6 +141,7 @@ void Grid::readInGridFile(char* fileName) {
 
 }
 
+// Multiplies grid values by input float 
 void Grid::multiply(float factor) {
 
 	for (int row = 0; row < this->numRows; row++) {
@@ -150,22 +159,31 @@ void Grid::multiply(float factor) {
 
 }
 
+// Given input file name, write out the grid info and the grid to file
 void Grid::writeGridToFile(char* fileName) {
 	
 	ofstream outputFile;
 	outputFile.open(fileName);
+
+	outputFile << "ncols " << this->numCols << "\n";
+	outputFile << "nrows " << this->numRows << "\n";
+	outputFile << "xllcorner " << this->xllCorner << "\n";
+	outputFile << "yllcorner " << this->yllCorner << "\n";
+	outputFile << "cellsize " << this->cellSize << "\n";
+	outputFile << "NODATA_value " << this->nodata_value << "\n\n";
 	
 	for (int row = 0; row < this->numRows; row++) {
 		for (int col = 0; col < this->numCols; col++) {
-			outputFile << this->gridVals[row][col] << "\t";
+			outputFile << this->gridVals[row][col] << "  ";
 		}
 		outputFile << "\n";
 	}
-
+	outputFile << "\n";
 	outputFile.close();
 
 }
 
+// Frees memory allocated by grids
 void Grid::freeGridData() {
 	free(this->getGridValues());
 }
