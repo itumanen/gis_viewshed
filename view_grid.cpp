@@ -5,6 +5,10 @@
 // Allocates 2D grid array and calls initialization method
 View_Grid::View_Grid(Grid* elevGrid, int vp_row, int vp_col) {
 
+	// Set viewpoint coordinates
+	this->setVProw(vp_row);
+	this->setVPcol(vp_col);
+
 	// Set grid attributes
 	this->setNumCols(elevGrid->getNumCols());
 	this->setNumRows(elevGrid->getNumRows());
