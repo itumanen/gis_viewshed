@@ -185,6 +185,9 @@ void Grid::writeGridToFile(char* fileName) {
 
 // Frees memory allocated by grids
 void Grid::freeGridData() {
+	for (int row = 0; row < this->numRows; row++) {
+		free(this->getRow(row));
+	}
 	free(this->getGridValues());
 }
 
