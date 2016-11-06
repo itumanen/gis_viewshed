@@ -191,7 +191,7 @@ void Grid::freeGridData() {
 	free(this->getGridValues());
 }
 
-// Grid::~Grid() {
-// 	this->freeGridData();
-// }
+Grid::~Grid() {
+	this->freeGridData();
+}
 

@@ -39,9 +39,6 @@ int main(int argc, char** argv) {
     // Write viewshed grid info to output file 
     // viewGrid->writeGridToFile(outputView);
 
-    // delete memory from array
-    elevGrid->freeGridData();
-
     return(EXIT_SUCCESS);
 
 }
