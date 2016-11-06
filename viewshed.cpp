@@ -12,41 +12,35 @@ int main(int argc, char** argv) {
         return(EXIT_FAILURE);
     }
 
-    string elevName, fdName, faName; 
+    // parse input 
+    char* inputGrid = argv[1];
+    char* outputView = argv[2];
+    int row = atoi(argv[3]);
+    int col = atoi(argv[4]);
+
+    // declare grids
     Grid* elevGrid;
-    FD_Grid* fdGrid;
-    FA_Grid* faGrid;
+    // View_Grid* viewGrid;
     
     // Original grid
-    elevGrid = new Grid(argv[1]);
+    elevGrid = new Grid(inputGrid);
     elevGrid->printInfo();
-
-    fdGrid = new FD_Grid(elevGrid);
-    fdGrid->computeFlowDir(elevGrid);
-    printf("\nFlow direction grid\n");
-
-    char* outputFD = argv[2];
-    fdGrid->writeGridToFile(outputFD);
-
-    faGrid = new FA_Grid(elevGrid);
-    printf("\nFlow accumulation grid\n");
 
     // Start timer
     clock_t timestamp = clock();
-    faGrid->computeFlow(fdGrid);
+
+    /* COMPUTE VIEW SHED */
 
     // End timer and print computation time
     timestamp = clock() - timestamp;
     printf("Timestamp is %lu\n", timestamp);
     printf("Run time = %f\n", (float)timestamp / CLOCKS_PER_SEC);
 
-    char* outputFA = argv[3];
-    faGrid->writeGridToFile(outputFA);
+    // Write viewshed grid info to output file 
+    // viewGrid->writeGridToFile(outputView);
 
     // delete memory from array
     elevGrid->freeGridData();
-    fdGrid->freeGridData();
-    faGrid->freeGridData();
 
     return(EXIT_SUCCESS);
 
