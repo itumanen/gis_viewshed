@@ -5,12 +5,16 @@
 class View_Grid : public Grid {
 public:
 	// Constructor
-	View_Grid(Grid* elevGrid);
+	View_Grid(Grid* elevGrid, int vp_row, int vp_col);
 
 	// Methods
 	void initialize();
-	void computeViewshed(Grid* elevGrid, int vp_row, int vp_col);
-	int isVisible(Grid* elevGrid, int vp_row, int vp_col, int row, int col);
+	void computeViewshed(Grid* elevGrid);
+	int isVisible(Grid* elevGrid, int row, int col);
+
+private:
+	int vp_row;
+	int vp_col;
 
 };
 

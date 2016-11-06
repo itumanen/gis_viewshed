@@ -3,7 +3,7 @@
 // CONSTRUCTOR 
 // Reads in values from elevation grid
 // Allocates 2D grid array and calls initialization method
-View_Grid::View_Grid(Grid* elevGrid) {
+View_Grid::View_Grid(Grid* elevGrid, int vp_row, int vp_col) {
 
 	// Set grid attributes
 	this->setNumCols(elevGrid->getNumCols());
@@ -36,10 +36,10 @@ void View_Grid::initialize() {
 	}
 }
 
-void View_Grid::computeViewshed(Grid* elevGrid, int vp_row, int vp_col) {
+void View_Grid::computeViewshed(Grid* elevGrid) {
 
 }
 
-int View_Grid::isVisible(Grid* elevGrid, int vp_row, int vp_col, int row, int col) {
+int View_Grid::isVisible(Grid* elevGrid, int row, int col) {
 	return 0;
 }
