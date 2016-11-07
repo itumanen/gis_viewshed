@@ -31,7 +31,7 @@ int main(int argc, char** argv) {
 
     /* COMPUTE VIEW SHED */
     viewGrid = new View_Grid(elevGrid, vp_row, vp_col);
-    // set viewpoint row and col of view grid
+    viewGrid->computeViewshed(elevGrid);
 
     // End timer and print computation time
     timestamp = clock() - timestamp;

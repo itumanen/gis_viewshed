@@ -27,10 +27,14 @@ View_Grid::View_Grid(Grid* elevGrid, int vp_row, int vp_col) {
 		assert(this->gridVals[i]);
 	}
 
+	// Set all values to -1
 	this->initialize();
 
 }
 
+// Called by View_Grid constructor
+// Iterates through all cells in the newly allocated 2D grid
+// and sets the values to -1
 void View_Grid::initialize() {
 
 	for (int row = 0; row < this->numRows; row++) {
@@ -40,10 +44,21 @@ void View_Grid::initialize() {
 	}
 }
 
+// Iterates through elevation grid and calls isVisible
+// Sets grid value to 0 or 1 if point is visible from given
+// viewpoint
 void View_Grid::computeViewshed(Grid* elevGrid) {
+	for (int i = 0; i < this->numRows; i++) {
+		for (int j = 0; j < this->numCols; j++) {
+			this->setGridValueAt(i, j, isVisible(elevGrid, i, j));
+		}
+	}
 
 }
 
+// Interpolates between point at given row/col coordinates
+// and viewpoint coordinates. Returns 0 if the point is not
+// visible and 1 if the point is visible 
 int View_Grid::isVisible(Grid* elevGrid, int row, int col) {
 	return 0;
 }
