@@ -19,11 +19,12 @@ public:
 
 	// Methods
 	void initialize();
-	void computeViewshed(Grid* elevGrid);
-	int isVisible(Grid* elevGrid, int row, int col);
-	float interpolate(Grid* elevGrid, int row, int col);
+	void computeViewshed();
+	int isVisible(int row, int col);
+	float interpolate(int row, int col);
 
 private:
+	Grid* elevGrid;
 	int vp_row;
 	int vp_col;
 

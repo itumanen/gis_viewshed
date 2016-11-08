@@ -19,6 +19,8 @@ View_Grid::View_Grid(Grid* elevGrid, int vp_row, int vp_col) {
 	this->setMinVal(elevGrid->getMinVal());
 	this->setMaxVal(elevGrid->getMaxVal());
 	this->setNodataValue(elevGrid->getNodataValue());
+	
+	this->elevGrid = elevGrid;
 
 	// Allocate array
 	this->gridVals = (float**) malloc(sizeof(float*) * this->numRows);
@@ -48,10 +50,10 @@ void View_Grid::initialize() {
 // Iterates through elevation grid and calls isVisible
 // Sets grid value to 0 or 1 if point is visible from given
 // viewpoint
-void View_Grid::computeViewshed(Grid* elevGrid) {
+void View_Grid::computeViewshed() {
 	for (int i = 0; i < this->numRows; i++) {
 		for (int j = 0; j < this->numCols; j++) {
-			this->setGridValueAt(i, j, isVisible(elevGrid, i, j));
+			this->setGridValueAt(i, j, isVisible(i, j));
 		}
 	}
 
@@ -63,14 +65,14 @@ void View_Grid::computeViewshed(Grid* elevGrid) {
 // Interpolates between point at given row/col coordinates
 // and viewpoint coordinates. Returns 0 if the point is not
 // visible and 1 if the point is visible 
-int View_Grid::isVisible(Grid* elevGrid, int row, int col) {
+int View_Grid::isVisible(int row, int col) {
 	return 0;
 }
 
 // compute tan x, where x is the angle formed by viewpoint elevation
 // and elevation of nearest point in path to (row, col)
 // tan(x) = (ha - hv) / d(a,v) where v is vp and a is point
-float View_Grid::interpolate(Grid* elevGrid, int row, int col) {
+float View_Grid::interpolate(int row, int col) {
 
 	return (elevGrid->getGridValueAt(row, col) - elevGrid->getGridValueAt(this->getVProw(), this->getVPcol())) /
 		sqrt(pow(row - this->getVProw(),2) + pow(col - this->getVPcol(), 2));
