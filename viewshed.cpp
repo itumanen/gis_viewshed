@@ -26,16 +26,16 @@ int main(int argc, char** argv) {
     elevGrid = new Grid(inputGrid);
     elevGrid->printInfo();
 
-    // Start timer
-    clock_t timestamp = clock();
-
     /* COMPUTE VIEW SHED */
     viewGrid = new View_Grid(elevGrid, vp_row, vp_col);
+    printf("viewGrid viewpoint at %d, %d\n", viewGrid->getVProw(), viewGrid->getVPcol());
+
+    // Start timer
+    clock_t timestamp = clock();
     viewGrid->computeViewshed(elevGrid);
 
     // End timer and print computation time
     timestamp = clock() - timestamp;
-    printf("Timestamp is %lu\n", timestamp);
     printf("Run time = %f\n", (float)timestamp / CLOCKS_PER_SEC);
 
     // Write viewshed grid info to output file 

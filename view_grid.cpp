@@ -56,6 +56,9 @@ void View_Grid::computeViewshed(Grid* elevGrid) {
 
 }
 
+// COMPUTE IN QUADRANTS to help with debugging
+// Isolate horizontal/vertical lines
+
 // Interpolates between point at given row/col coordinates
 // and viewpoint coordinates. Returns 0 if the point is not
 // visible and 1 if the point is visible 

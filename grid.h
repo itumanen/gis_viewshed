@@ -14,7 +14,6 @@ using namespace std;
 #define yllcorner "yllcorner"
 #define cellsize "cellsize"
 #define DEFAULT_NODATA -99999
-#define INITIAL_VALUE 1
 
 class Grid {
 

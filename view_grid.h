@@ -1,6 +1,8 @@
 #include "grid.h" 
 
 #define VIEW_NOT_COMPUTED -1
+#define NOT_VISIBLE 0
+#define IS_VISIBLE 1
 
 class View_Grid : public Grid {
 public:
