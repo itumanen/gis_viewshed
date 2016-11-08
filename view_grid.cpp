@@ -1,4 +1,5 @@
 #include "view_grid.h"
+#include <math.h>
 
 // CONSTRUCTOR 
 // Reads in values from elevation grid
@@ -64,4 +65,14 @@ void View_Grid::computeViewshed(Grid* elevGrid) {
 // visible and 1 if the point is visible 
 int View_Grid::isVisible(Grid* elevGrid, int row, int col) {
 	return 0;
+}
+
+// compute tan x, where x is the angle formed by viewpoint elevation
+// and elevation of nearest point in path to (row, col)
+// tan(x) = (ha - hv) / d(a,v) where v is vp and a is point
+float View_Grid::interpolate(Grid* elevGrid, int row, int col) {
+
+	return (elevGrid->getGridValueAt(row, col) - elevGrid->getGridValueAt(this->getVProw(), this->getVPcol())) /
+		sqrt(pow(row - this->getVProw(),2) + pow(col - this->getVPcol(), 2));
+
 }

@@ -21,6 +21,7 @@ public:
 	void initialize();
 	void computeViewshed(Grid* elevGrid);
 	int isVisible(Grid* elevGrid, int row, int col);
+	float interpolate(Grid* elevGrid, int row, int col);
 
 private:
 	int vp_row;

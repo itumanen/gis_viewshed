@@ -25,14 +25,19 @@ int main(int argc, char** argv) {
     // Original grid
     elevGrid = new Grid(inputGrid);
     elevGrid->printInfo();
+    elevGrid->printGrid();
 
-    /* COMPUTE VIEW SHED */
+    // Viewshed grid
     viewGrid = new View_Grid(elevGrid, vp_row, vp_col);
     printf("viewGrid viewpoint at %d, %d\n", viewGrid->getVProw(), viewGrid->getVPcol());
 
     // Start timer
     clock_t timestamp = clock();
+
+    // Compute viewshed grid
     viewGrid->computeViewshed(elevGrid);
+    float tanX = viewGrid->interpolate(elevGrid, 1,1);
+    printf("tanX is %f\n", tanX);
 
     // End timer and print computation time
     timestamp = clock() - timestamp;
