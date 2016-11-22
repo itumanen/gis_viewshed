@@ -2,6 +2,12 @@
 #include <cstring>
 #include <time.h>
 
+/* Assignment 3 for Algs and Data Structures for GIS: Viewshed 
+* @authors Bella Tumaneng and Alice Kim
+*
+*
+*/
+
 int main(int argc, char** argv) {
 
     //check args and argc to make sure the user entered a  file

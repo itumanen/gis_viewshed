@@ -4,6 +4,12 @@
 #define NOT_VISIBLE 0
 #define IS_VISIBLE 1
 
+
+/* VIEW GRID CLASS
+	Inherited from Grid class; implements methods to determine
+	whether other points in the grid are visible from a given
+	view point.
+ */
 class View_Grid : public Grid {
 public:
 	// Constructor
@@ -21,7 +27,7 @@ public:
 	void initialize();
 	void computeViewshed();
 	int isVisible(int row, int col);
-	float interpolate(int row, int col);
+	float getVerticalAngle(float row, float col);
 
 private:
 	Grid* elevGrid;
