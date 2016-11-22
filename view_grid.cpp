@@ -94,8 +94,8 @@ float View_Grid::getVerticalAngle(float row, float col) {
 }
 
 // Returns second coordinate of intersection point on a vertical axis
-float View_Grid::getIntersectionRow(float slope, int iteration) {
-	return slope * iteration;
+float View_Grid::getIntersectionRow(float slope, int col) {
+	return slope * col;
 }
 
 // Considers VP as the "origin" of a coordinate system in order to consider

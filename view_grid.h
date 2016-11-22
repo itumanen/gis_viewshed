@@ -28,6 +28,10 @@ public:
 	void computeViewshed();
 	int isVisible(int row, int col);
 	float getVerticalAngle(float row, float col);
+	float getSlope(int row, int col);
+	float getHeight(int iteration, int row, int col);
+	float getIntersectionRow(float slope, int col);
+
 
 private:
 	Grid* elevGrid;

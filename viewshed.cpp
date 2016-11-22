@@ -42,8 +42,8 @@ int main(int argc, char** argv) {
 
     // Compute viewshed grid
     viewGrid->computeViewshed();
-    float tanX = viewGrid->interpolate(1,1);
-    printf("tanX is %f\n", tanX);
+    // float tanX = viewGrid->interpolate(1,1);
+    // printf("tanX is %f\n", tanX);
 
     // End timer and print computation time
     timestamp = clock() - timestamp;
