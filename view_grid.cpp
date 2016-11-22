@@ -66,6 +66,7 @@ void View_Grid::computeViewshed() {
 // and viewpoint coordinates. Returns 0 if the point is not
 // visible and 1 if the point is visible 
 int View_Grid::isVisible(int row, int col) {
+
 	// interpolate to determine LOS between VP and (row, col)
 	float LOS = getVerticalAngle(row, col); // vertical angle of the line of sight
 	float slope = getSlope(row, col); // slope of the line between VP and P
@@ -77,7 +78,7 @@ int View_Grid::isVisible(int row, int col) {
 	}
 	// interpolate to determine height of points p on vert/horiz axes
 	// compare heights at point p
-	return 0;
+	return NOT_VISIBLE;
 }
 
 float View_Grid::getHeight(int iteration, int row, int col) {
@@ -103,5 +104,8 @@ float View_Grid::getIntersectionRow(float slope, int col) {
 // the view point and the point of consideration p
 // Input: coordinates of the point p
 float View_Grid::getSlope(int row, int col) {
-	return ((row - getVProw()) / (col - getVPcol()));
+	return 0.1;
+	// float slope = (row - getVProw()) / (col - getVPcol());
+	// cout << "test" << endl; return slope;
+	return static_cast<float> (row - getVProw()) / (col - getVPcol());
 }

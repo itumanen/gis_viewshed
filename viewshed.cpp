@@ -5,6 +5,9 @@
 /* Assignment 3 for Algs and Data Structures for GIS: Viewshed 
 * @authors Bella Tumaneng and Alice Kim
 *
+* Develop C/C++ code to compute the viewshed of a point on a grid terrain.
+* COMPILE: make
+* RUN: ./viewshed <input-file> <output-file> <viewpoint-row> <viewpoint-col>
 *
 */
 
@@ -41,9 +44,11 @@ int main(int argc, char** argv) {
     clock_t timestamp = clock();
 
     // Compute viewshed grid
+    viewGrid->printGrid();
+
     viewGrid->computeViewshed();
-    // float tanX = viewGrid->interpolate(1,1);
-    // printf("tanX is %f\n", tanX);
+    float tanX = viewGrid->getVerticalAngle(1,1);
+    printf("tanX is %f\n", tanX);
 
     // End timer and print computation time
     timestamp = clock() - timestamp;
