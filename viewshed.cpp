@@ -44,11 +44,12 @@ int main(int argc, char** argv) {
     clock_t timestamp = clock();
 
     // Compute viewshed grid
-    viewGrid->printGrid();
-
     viewGrid->computeViewshed();
-    float tanX = viewGrid->getVerticalAngle(1,1);
-    printf("tanX is %f\n", tanX);
+
+    printf("\n");
+    viewGrid->printGrid();
+    float verticalAngle = viewGrid->getVerticalAngle(3,3);
+    printf("verticalAngle is %f\n", verticalAngle);
 
     // End timer and print computation time
     timestamp = clock() - timestamp;
