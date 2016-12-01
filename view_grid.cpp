@@ -101,6 +101,12 @@ float View_Grid::getVerticalAngle(float row, float col) {
 				/ (col - getVPcol()));
 }
 
+// float View_Grid::getVerticalAngle(float fromR, float fromC, float toR, float toC) {
+// 	return atan((elevGrid->getGridValueAt(toR, toC) - elevGrid->getGridValueAt(fromR, fromC))
+// 				/ (toC - fromC));
+// }
+
+
 // Returns second coordinate of intersection point on a vertical axis
 float View_Grid::getIntersectionRow(float slope, float yIntercept, int col) {
 	return slope * col + yIntercept;
