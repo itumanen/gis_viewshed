@@ -28,10 +28,10 @@ public:
 	void computeViewshed();
 	int isVisible(int row, int col);
 	int compareHeights(int row, int col);
-	float getVerticalAngle(float row, float col);
+	float getVerticalAngle(float col, float value);
 	float getSlope(int row, int col);
 	float getYIntercept(float slope);
-	float interpolate(float row, float col);
+	float interpolate(float interR, int col);
 	float getHeight(float intersect, float VerticalAngle);
 	float getIntersectionRow(float slope, float yIntercept, int col);
 
