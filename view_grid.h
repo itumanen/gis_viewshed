@@ -40,7 +40,6 @@ private:
 	Grid* elevGrid;
 	int vp_row;
 	int vp_col;
-
 };
 
 

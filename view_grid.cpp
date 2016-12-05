@@ -1,8 +1,8 @@
 #include "view_grid.h"
 #include <math.h>
 
-bool VERTICAL = true; 
-bool DEBUG = true;
+bool HORIZONTAL = true; 
+bool DEBUG = false;
 bool DEBUG_I = false;
 
 // CONSTRUCTOR 
@@ -53,19 +53,18 @@ void View_Grid::initialize() {
 // Iterates through elevation grid and calls isVisible
 // Sets grid value to 0 or 1 if point is visible from given
 // viewpoint
-// TODO handle horizontal and vertical of the viewpoint itself
 // TODO three other quadrants
 // TODO look at horizontal intersections too 
 void View_Grid::computeViewshed() {
 
 	// LOWER RIGHT QUADRANT
-	// TODO HANDLE ROW AND COL OF THE VP
-	for (int i = this->getVProw() + 1; i < this->getNumRows(); i++) {
-		for (int j = this->getVPcol() + 1; j < this->getNumCols(); j++) {
+	for (int i = this->getVProw(); i < this->getNumRows(); i++) {
+		for (int j = this->getVPcol(); j < this->getNumCols(); j++) {
 			if (elevGrid->getGridValueAt(i, j) == getNodataValue()) this->setGridValueAt(i, j, getNodataValue());
 			this->setGridValueAt(i, j, isVisible(i, j));
 		}
 	}
+
 }
 
 int View_Grid::compareHeights(int row, int col) {
@@ -86,20 +85,19 @@ int View_Grid::isVisible(int row, int col) {
 		printf("yIntercept is %f at %d, %d\n", yIntercept, row, col); fflush(stdout);
 	}
 
-	// TODO check if VP and P are in the same row, treat this case separately
 	// go through vertical lines between VP and P
-	for (int i = this->getVPcol() + 1; i <= col; i++) {
-		//find intersection between vertical and LOS
+	// find intersection between vertical and LOS
+	// interpolate between rows to compute height at intersection
+	// compute vertical angle between VP and intersection
+	for (int i = this->getVPcol() + 1; i < col + 1; i++) {
 		float interR = getIntersectionRow(slope, yIntercept, i);
-		// interpolate between rows to compute height at intersection
 		float height = interpolate(interR, i);
-		if (DEBUG) printf("height at point %f, %d is %f\n", interR, i, height); fflush(stdout);
-		// compute vertical angle between VP and intersection
-		float vertAngle = getVerticalAngle(i, height);
-		if (DEBUG) printf("vertical angle of LOS at %d is %f and of point p in col %d is %f\n\n", col, LOS, i, vertAngle); fflush(stdout); 
-		if (vertAngle >= LOS) { cout << "not visible" << endl; return NOT_VISIBLE;}
+		if (getVerticalAngle(i, height) > LOS) return NOT_VISIBLE;
 
 	}
+
+	// TODO HORIZONTAL INTERSECTIONS
+
 	if (DEBUG) cout << "visible" << endl;
 	return VISIBLE;
 }
@@ -119,13 +117,6 @@ float View_Grid::getVerticalAngle(float col, float value) {
 
 // height at intersection = d * tan(a)
 float View_Grid::interpolate(float interR, int col) {
-	if(DEBUG_I) {
-		cout << "COL IN INTERPOLATE METHOD IS " << col << endl;
-		cout << "getGridValueAt(floor(interR), col) " << this->elevGrid->getGridValueAt(floor(interR),col) << endl;
-		cout << "interR is " << interR << " ceil(interR) " << ceil(interR) << " floor(interR) " << floor(interR) << endl;
-		cout << "ceil " << this->elevGrid->getGridValueAt(ceil(interR),col) << " floor " << this->elevGrid->getGridValueAt(floor(interR), col) << endl;
-		cout << "difference between ceil and floor of rows is " << this->elevGrid->getGridValueAt(ceil(interR), col) - this->elevGrid->getGridValueAt(floor(interR), col) << endl;
-	} 
 	return ((this->elevGrid->getGridValueAt(ceil(interR), col) - this->elevGrid->getGridValueAt(floor(interR), col))
 			* (interR - floor(interR)))
 			+ this->elevGrid->getGridValueAt(floor(interR), col);
@@ -133,7 +124,7 @@ float View_Grid::interpolate(float interR, int col) {
 
 
 // Returns second coordinate of intersection point on a vertical axis
-float View_Grid::getIntersectionRow(float slope, float yIntercept, int col) {
+float View_Grid::getIntersectionRow(float slope, float yIntercept, int row, int col) {
 	if(DEBUG && slope*col+yIntercept < this->getNumCols()) printf("intersection row is %f at %d\n", slope * col + yIntercept, col); fflush(stdout);
 	return slope * col + yIntercept;
 }
@@ -141,8 +132,6 @@ float View_Grid::getIntersectionRow(float slope, float yIntercept, int col) {
 // Computes slope of equation of line between VP and given point p
 // Input: coordinates of the point p
 float View_Grid::getSlope(int row, int col) {
-	// if (row == getVProw()) return 1; // TODO are these necessary?
-	// if (col == getVPcol()) return 0;
 	return static_cast<float> (row - getVProw()) / (col - getVPcol());
 }
 
