@@ -76,16 +76,16 @@ void View_Grid::computeViewshed() {
 	}
 
 	// LOWER LEFT QUADRANT
-	if (vp_row < numRows -1 && vp_col > 0) {
+	if (vp_row < numRows - 1 && vp_col > 0) {
 		lowerLeftQuadAxes();
 	}
 
-	// UPPER LEFT QUADRANT
+	// // UPPER LEFT QUADRANT
 	if(vp_row > 0 && vp_col > 0) {
 		upperLeftQuadAxes();
 	}
 
-	// UPPER RIGHT QUADRANT
+	// // UPPER RIGHT QUADRANT
 	if (vp_row > 0 && vp_col < numCols - 1) {
 		upperRightQuadAxes();
 	}
@@ -96,10 +96,10 @@ void View_Grid::computeViewshed() {
 void View_Grid::lowerRightQuadAxes() {
 
 	// set neighbors on VP row and col to visible
-	this->setGridValueAt(vp_row, vp_col + 1, VISIBLE);
-	this->setGridValueAt(vp_row + 1, vp_col, VISIBLE);
+	setGridValueAt(vp_row, vp_col + 1, VISIBLE);
+	setGridValueAt(vp_row + 1, vp_col, VISIBLE);
 
-	// keep track of maximum vertical angle
+	HORIZONTAL = true;
 	float LOS = getVerticalAngle(vp_row, vp_col + 1, this->elevGrid->getGridValueAt(vp_row, vp_col + 1));
 	for (int col = this->vp_col + 2; col < this->getNumCols(); col++) {
 		float verticalAngle = getVerticalAngle(vp_row, col, this->elevGrid->getGridValueAt(vp_row, col));
@@ -110,10 +110,9 @@ void View_Grid::lowerRightQuadAxes() {
 		}
 		this->setGridValueAt(vp_row, col, NOT_VISIBLE);
 	} 
+	HORIZONTAL = false;
 
-	HORIZONTAL = true;
 	LOS = getVerticalAngle(getVProw() + 1, getVPcol(), this->elevGrid->getGridValueAt(getVProw() + 1, getVPcol()));
-
 	for (int row = this->getVProw() + 2; row < this->getNumRows(); row++) {
 		float verticalAngle = getVerticalAngle(row, vp_col, this->elevGrid->getGridValueAt(row, vp_col));
 		if(verticalAngle > LOS) {
@@ -124,49 +123,130 @@ void View_Grid::lowerRightQuadAxes() {
 		this->setGridValueAt(row, getVPcol(), NOT_VISIBLE);
 	} 
 
-	HORIZONTAL = false;
 }
 
 void View_Grid::lowerLeftQuadAxes() {
-	// set neighbors on VP row and col to visible
-	if (vp_col > 0) this->setGridValueAt(vp_row, vp_col - 1, VISIBLE);
-	if (vp_row < numRows) this->setGridValueAt(vp_row + 1, vp_col, VISIBLE);
 
-	// keep track of maximum vertical angle
-	// TODO is this redundant?
-	float LOS = getVerticalAngle(vp_row, vp_col - 1, this->elevGrid->getGridValueAt(vp_row, vp_col - 1));
-	for (int col = vp_col - 2; col > -1; col--) {
-	// for (int col = this->vp_col + 2; col < this->getNumCols(); col++) {
-		float verticalAngle = getVerticalAngle(vp_row, col, this->elevGrid->getGridValueAt(vp_row, col));
-		if(verticalAngle > LOS) {
-			this->setGridValueAt(vp_row, col, VISIBLE);
-			LOS = verticalAngle;
-			continue;
-		}
-		this->setGridValueAt(vp_row, col, NOT_VISIBLE);
-	} 
+	// redundancy check on vertical axis -- if no lower right quadrant
+	bool redundant = false;
+	if (getGridValueAt(vp_row + 1, vp_col) != VIEW_NOT_COMPUTED) redundant = true;
+
+	// set neighbors on VP row and col to visible
+	setGridValueAt(vp_row, vp_col - 1, VISIBLE);
+	setGridValueAt(vp_row + 1, vp_col, VISIBLE);
 
 	HORIZONTAL = true;
-	LOS = getVerticalAngle(getVProw() + 1, getVPcol(), this->elevGrid->getGridValueAt(getVProw() + 1, getVPcol()));
-
-	for (int row = this->getVProw() + 2; row < this->getNumRows(); row++) {
-		float verticalAngle = getVerticalAngle(row, vp_col, this->elevGrid->getGridValueAt(row, vp_col));
+	float LOS = getVerticalAngle(vp_row, vp_col - 1, this->elevGrid->getGridValueAt(vp_row, vp_col - 1));
+	for (int col = vp_col - 2; col > -1; col--) {
+		float verticalAngle = getVerticalAngle(vp_row, col, this->elevGrid->getGridValueAt(vp_row, col));
 		if(verticalAngle > LOS) {
-			this->setGridValueAt(row, vp_col, VISIBLE);
-			LOS = verticalAngle;
+			setGridValueAt(vp_row, col, VISIBLE);
+			LOS = verticalAngle; // keep track of max vertical angle
 			continue;
 		}
-		this->setGridValueAt(row, getVPcol(), NOT_VISIBLE);
+		setGridValueAt(vp_row, col, NOT_VISIBLE);
 	} 
-
 	HORIZONTAL = false;
+
+	if (!redundant) {
+
+		LOS = getVerticalAngle(getVProw() + 1, getVPcol(), this->elevGrid->getGridValueAt(getVProw() + 1, getVPcol()));
+		for (int row = this->getVProw() + 2; row < this->getNumRows(); row++) {
+			float verticalAngle = getVerticalAngle(row, vp_col, this->elevGrid->getGridValueAt(row, vp_col));
+			if(verticalAngle > LOS) {
+				this->setGridValueAt(row, vp_col, VISIBLE);
+				LOS = verticalAngle;
+				continue;
+			}
+			setGridValueAt(row, getVPcol(), NOT_VISIBLE);
+		} 
+
+	}
+
 }
 
 void View_Grid::upperLeftQuadAxes() {
 
+	// redundancy check on vertical axis
+	bool redundant = false;
+	if (getGridValueAt(vp_row - 1, vp_col) != VIEW_NOT_COMPUTED) redundant = true;
+
+	// set neighbors on VP row and col to visible
+	setGridValueAt(vp_row, vp_col - 1, VISIBLE);
+	setGridValueAt(vp_row - 1, vp_col, VISIBLE);
+
+	float LOS = getVerticalAngle(vp_row - 1, vp_col, this->elevGrid->getGridValueAt(vp_row - 1, vp_col));
+	for (int row = this->getVProw() - 2; row > -1; row--) {
+		float verticalAngle = getVerticalAngle(row, vp_col, this->elevGrid->getGridValueAt(row, vp_col));
+		if(verticalAngle > LOS) {
+			this->setGridValueAt(row, vp_col, VISIBLE);
+			LOS = verticalAngle;
+			continue;
+		}
+		this->setGridValueAt(row, getVPcol(), NOT_VISIBLE);
+	} 
+
+	if (!redundant) {
+
+		HORIZONTAL = true;
+
+		float LOS = getVerticalAngle(vp_row, vp_col - 1, this->elevGrid->getGridValueAt(vp_row, vp_col - 1));
+		for (int col = vp_col - 2; col > -1; col--) {
+			float verticalAngle = getVerticalAngle(vp_row, col, this->elevGrid->getGridValueAt(vp_row, col));
+			if(verticalAngle > LOS) {
+				this->setGridValueAt(vp_row, col, VISIBLE);
+				LOS = verticalAngle;
+				continue;
+			}
+			this->setGridValueAt(vp_row, col, NOT_VISIBLE);
+		} 
+		
+		HORIZONTAL = false;
+
+	}
+
 }
 
 void View_Grid::upperRightQuadAxes() {
+
+	bool redundantC = false;
+	bool redundantR = false;
+
+	if (getGridValueAt(vp_row - 1, vp_col) != VIEW_NOT_COMPUTED) redundantR = true;
+	if (getGridValueAt(vp_row, vp_col + 1) != VIEW_NOT_COMPUTED) redundantC = true;
+	if (redundantC && redundantR) return; // axes already computed
+
+	// set neighbors on VP row and col to visible
+	setGridValueAt(vp_row, vp_col + 1, VISIBLE);
+	setGridValueAt(vp_row + 1, vp_col, VISIBLE);
+
+	float LOS = getVerticalAngle(vp_row, vp_col + 1, this->elevGrid->getGridValueAt(vp_row, vp_col + 1));
+	if (!redundantC) {
+		HORIZONTAL = true;
+		for (int col = this->vp_col + 2; col < this->getNumCols(); col++) {
+			float verticalAngle = getVerticalAngle(vp_row, col, this->elevGrid->getGridValueAt(vp_row, col));
+			if(verticalAngle > LOS) {
+				this->setGridValueAt(vp_row, col, VISIBLE);
+				LOS = verticalAngle;
+				continue;
+			}
+			this->setGridValueAt(vp_row, col, NOT_VISIBLE);
+		} 
+		HORIZONTAL = false;
+	}
+
+	LOS = getVerticalAngle(getVProw() - 1, getVPcol(), this->elevGrid->getGridValueAt(getVProw() - 1, getVPcol()));
+	if (!redundantR) {
+		for (int row = this->getVProw() - 2; row > -1; row--) {
+			float verticalAngle = getVerticalAngle(row, vp_col, this->elevGrid->getGridValueAt(row, vp_col));
+			if(verticalAngle > LOS) {
+				this->setGridValueAt(row, vp_col, VISIBLE);
+				LOS = verticalAngle;
+				continue;
+			}
+			this->setGridValueAt(row, getVPcol(), NOT_VISIBLE);
+		} 
+	}
 
 }
 // Interpolates between point at given row/col coordinates
