@@ -54,27 +54,36 @@ void View_Grid::initialize() {
 // Sets grid value to 0 or 1 if point is visible from given
 // viewpoint
 // TODO three other quadrants
-// TODO look at horizontal intersections too 
+// TODO CHECK IF VP IS ON THE EDGE OF THE GRID
+
 void View_Grid::computeViewshed() {
 
+	// UPPER RIGHT QUADRANT
+	if (vp_row < numRows -1 && vp_col > 0) {
+		lowerLeftQuadAxes();
+	}
+
 	// LOWER RIGHT QUADRANT
-	lowerRightQuadAxes();
-	for (int i = this->getVProw() + 1; i < this->getNumRows(); i++) {
-		for (int j = this->getVPcol() + 1; j < this->getNumCols(); j++) {
-			if (i == vp_row + 1 && j == vp_col + 1) {
-				setGridValueAt(i,j,VISIBLE); 
-				continue; 
+	if (vp_row < numRows - 1 && vp_col < numCols - 1) {
+		lowerRightQuadAxes();
+		for (int i = this->getVProw() + 1; i < this->getNumRows(); i++) {
+			for (int j = this->getVPcol() + 1; j < this->getNumCols(); j++) {
+				if (i == vp_row + 1 && j == vp_col + 1) {
+					setGridValueAt(i,j,VISIBLE); 
+					continue; 
+				}
+				if (elevGrid->getGridValueAt(i, j) == getNodataValue()) {
+					this->setGridValueAt(i, j, getNodataValue());	
+				} 
+				this->setGridValueAt(i, j, isVisible(i, j));
 			}
-			if (elevGrid->getGridValueAt(i, j) == getNodataValue()) {
-				this->setGridValueAt(i, j, getNodataValue());	
-			} 
-			this->setGridValueAt(i, j, isVisible(i, j));
 		}
 	}
 
 }
 
 void View_Grid::lowerRightQuadAxes() {
+
 	// set neighbors on VP row and col to visible
 	this->setGridValueAt(vp_row, vp_col + 1, VISIBLE);
 	this->setGridValueAt(vp_row + 1, vp_col, VISIBLE);
@@ -82,6 +91,40 @@ void View_Grid::lowerRightQuadAxes() {
 	// keep track of maximum vertical angle
 	float LOS = getVerticalAngle(vp_row, vp_col + 1, this->elevGrid->getGridValueAt(vp_row, vp_col + 1));
 	for (int col = this->vp_col + 2; col < this->getNumCols(); col++) {
+		float verticalAngle = getVerticalAngle(vp_row, col, this->elevGrid->getGridValueAt(vp_row, col));
+		if(verticalAngle > LOS) {
+			this->setGridValueAt(vp_row, col, VISIBLE);
+			LOS = verticalAngle;
+			continue;
+		}
+		this->setGridValueAt(vp_row, col, NOT_VISIBLE);
+	} 
+
+	HORIZONTAL = true;
+	LOS = getVerticalAngle(getVProw() + 1, getVPcol(), this->elevGrid->getGridValueAt(getVProw() + 1, getVPcol()));
+
+	for (int row = this->getVProw() + 2; row < this->getNumRows(); row++) {
+		float verticalAngle = getVerticalAngle(row, vp_col, this->elevGrid->getGridValueAt(row, vp_col));
+		if(verticalAngle > LOS) {
+			this->setGridValueAt(row, vp_col, VISIBLE);
+			LOS = verticalAngle;
+			continue;
+		}
+		this->setGridValueAt(row, getVPcol(), NOT_VISIBLE);
+	} 
+
+	HORIZONTAL = false;
+}
+
+void View_Grid::lowerLeftQuadAxes() {
+	// set neighbors on VP row and col to visible
+	if (vp_col > 0) this->setGridValueAt(vp_row, vp_col - 1, VISIBLE);
+	if (vp_row < numRows) this->setGridValueAt(vp_row + 1, vp_col, VISIBLE);
+
+	// keep track of maximum vertical angle
+	float LOS = getVerticalAngle(vp_row, vp_col - 1, this->elevGrid->getGridValueAt(vp_row, vp_col - 1));
+	for (int col = vp_col - 2; col > -1; col--) {
+	// for (int col = this->vp_col + 2; col < this->getNumCols(); col++) {
 		float verticalAngle = getVerticalAngle(vp_row, col, this->elevGrid->getGridValueAt(vp_row, col));
 		if(verticalAngle > LOS) {
 			this->setGridValueAt(vp_row, col, VISIBLE);
