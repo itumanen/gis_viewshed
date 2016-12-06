@@ -46,13 +46,12 @@ int main(int argc, char** argv) {
     // Compute viewshed grid
     viewGrid->computeViewshed();
 
-    printf("\n");
-    viewGrid->printGrid();
-    float verticalAngle = viewGrid->getVerticalAngle(3,3);
-    printf("verticalAngle is %f\n", verticalAngle);
-
     // End timer and print computation time
     timestamp = clock() - timestamp;
+
+    printf("\n");
+    viewGrid->printGrid();
+
     printf("Run time = %f\n", (float)timestamp / CLOCKS_PER_SEC);
 
     // Write viewshed grid info to output file 
