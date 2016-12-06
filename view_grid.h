@@ -32,7 +32,6 @@ public:
 	float getSlope(int row, int col);
 	float getYIntercept(float slope);
 	float interpolate(float index, int row, int col);
-	float getHeight(float intersect, float VerticalAngle);
 	float getIntersection(float slope, float yIntercept, int row, int col);
 
 

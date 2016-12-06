@@ -61,7 +61,9 @@ void View_Grid::computeViewshed() {
 	lowerRightQuadAxes();
 	for (int i = this->getVProw() + 1; i < this->getNumRows(); i++) {
 		for (int j = this->getVPcol() + 1; j < this->getNumCols(); j++) {
-			if (elevGrid->getGridValueAt(i, j) == getNodataValue()) this->setGridValueAt(i, j, getNodataValue());
+			if (elevGrid->getGridValueAt(i, j) == getNodataValue()) {
+				this->setGridValueAt(i, j, getNodataValue());	
+			} 
 			this->setGridValueAt(i, j, isVisible(i, j));
 		}
 	}
@@ -119,22 +121,24 @@ int View_Grid::isVisible(int row, int col) {
 	// find intersection between vertical and LOS
 	// interpolate between rows to compute height at intersection
 	// compute vertical angle between VP and intersection
-	for (int i = this->getVPcol() + 1; i < col + 1; i++) {
-		float interR = getIntersection(slope, yIntercept, row, i);
-		float height = interpolate(interR, row, i);
-		if (getVerticalAngle(row, i, height) > LOS) return NOT_VISIBLE;
 
+	for (int j = this->getVPcol() + 1; j < col + 1; j++) {
+		float interR = getIntersection(slope, yIntercept, row, j);
+		float height = interpolate(interR, row, j);
+		if (getVerticalAngle(row, j, height) > LOS) return NOT_VISIBLE;
 	}
 
-	// TODO HORIZONTAL INTERSECTIONS
+	// check with horizontal intersections
+	HORIZONTAL = true;
+	for (int i = vp_row + 1; i < row + 1; i++) {
+		float interC = getIntersection(slope, yIntercept, i, col); 
+		float height = interpolate(interC, i, col);
+		if(getVerticalAngle(i, col, height) > LOS) return NOT_VISIBLE;
+	}
 	HORIZONTAL = false;
 
 	if (DEBUG) cout << "visible" << endl;
 	return VISIBLE;
-}
-
-float View_Grid::getHeight(float intersect, float verticalAngle) {
-	return intersect / tan(verticalAngle); // TODO check this
 }
 
 // compute tan x, where x is the angle formed by viewpoint elevation
@@ -143,20 +147,21 @@ float View_Grid::getHeight(float intersect, float verticalAngle) {
 // TODO absolute values to work with multiple quadrants
 // input value is elevation at comparison point
 float View_Grid::getVerticalAngle(int row, int col, float value) {
+	float distance = sqrt( pow(row - vp_row, 2) + pow(col - vp_col, 2) );
 	if (HORIZONTAL) {
 		return atan((value - elevGrid->getGridValueAt(vp_row, vp_col)) 
-					/ (row - vp_row));
+					/ distance);
 	}
 	return atan((value - elevGrid->getGridValueAt(this->getVProw(), this->getVPcol()))
-				/ (col - getVPcol()));
+				/ distance);
 }
 
 // height at intersection = d * tan(a)
 float View_Grid::interpolate(float index, int row, int col) {
 	if (HORIZONTAL) {
-		return ((this->elevGrid->getGridValueAt(ceil(index), row) - this->elevGrid->getGridValueAt(floor(index), row))
+		return ((this->elevGrid->getGridValueAt(row, ceil(index)) - this->elevGrid->getGridValueAt(row, floor(index)))
 			* (index - floor(index)))
-			+ this->elevGrid->getGridValueAt(floor(index), row);
+			+ this->elevGrid->getGridValueAt(row, floor(index));
 	}
 	return ((this->elevGrid->getGridValueAt(ceil(index), col) - this->elevGrid->getGridValueAt(floor(index), col))
 			* (index - floor(index)))
