@@ -36,6 +36,13 @@ int main(int argc, char** argv) {
     elevGrid->printInfo();
     elevGrid->printGrid();
 
+    // catch invalid inputs
+    if (vp_row < 0 || vp_row >= elevGrid->getNumRows() ||
+        vp_col < 0 || vp_col >= elevGrid->getNumCols() ) {
+        printf("INVALID INPUT! Exiting.\n"); fflush(stdout);
+        return(EXIT_FAILURE);
+    }
+
     // Viewshed grid
     viewGrid = new View_Grid(elevGrid, vp_row, vp_col);
     printf("viewGrid viewpoint at %d, %d\n", viewGrid->getVProw(), viewGrid->getVPcol());
