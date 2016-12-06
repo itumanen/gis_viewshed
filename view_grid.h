@@ -29,6 +29,7 @@ public:
 	int isVisible(int row, int col);
 	void lowerRightQuadAxes();
 	void lowerLeftQuadAxes();
+	void upperLeftQuadAxes();
 	void upperRightQuadAxes();
 	float getVerticalAngle(int row, int col, float value);
 	float getSlope(int row, int col);

@@ -58,11 +58,6 @@ void View_Grid::initialize() {
 
 void View_Grid::computeViewshed() {
 
-	// UPPER RIGHT QUADRANT
-	if (vp_row < numRows -1 && vp_col > 0) {
-		lowerLeftQuadAxes();
-	}
-
 	// LOWER RIGHT QUADRANT
 	if (vp_row < numRows - 1 && vp_col < numCols - 1) {
 		lowerRightQuadAxes();
@@ -80,7 +75,23 @@ void View_Grid::computeViewshed() {
 		}
 	}
 
+	// LOWER LEFT QUADRANT
+	if (vp_row < numRows -1 && vp_col > 0) {
+		lowerLeftQuadAxes();
+	}
+
+	// UPPER LEFT QUADRANT
+	if(vp_row > 0 && vp_col > 0) {
+		upperLeftQuadAxes();
+	}
+
+	// UPPER RIGHT QUADRANT
+	if (vp_row > 0 && vp_col < numCols - 1) {
+		upperRightQuadAxes();
+	}
+
 }
+
 
 void View_Grid::lowerRightQuadAxes() {
 
@@ -122,6 +133,7 @@ void View_Grid::lowerLeftQuadAxes() {
 	if (vp_row < numRows) this->setGridValueAt(vp_row + 1, vp_col, VISIBLE);
 
 	// keep track of maximum vertical angle
+	// TODO is this redundant?
 	float LOS = getVerticalAngle(vp_row, vp_col - 1, this->elevGrid->getGridValueAt(vp_row, vp_col - 1));
 	for (int col = vp_col - 2; col > -1; col--) {
 	// for (int col = this->vp_col + 2; col < this->getNumCols(); col++) {
@@ -150,6 +162,13 @@ void View_Grid::lowerLeftQuadAxes() {
 	HORIZONTAL = false;
 }
 
+void View_Grid::upperLeftQuadAxes() {
+
+}
+
+void View_Grid::upperRightQuadAxes() {
+
+}
 // Interpolates between point at given row/col coordinates
 // and viewpoint coordinates. Returns 0 if the point is not
 // visible and 1 if the point is visible 
