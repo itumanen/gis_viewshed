@@ -61,6 +61,10 @@ void View_Grid::computeViewshed() {
 	lowerRightQuadAxes();
 	for (int i = this->getVProw() + 1; i < this->getNumRows(); i++) {
 		for (int j = this->getVPcol() + 1; j < this->getNumCols(); j++) {
+			if (i == vp_row + 1 && j == vp_col + 1) {
+				setGridValueAt(i,j,VISIBLE); 
+				continue; 
+			}
 			if (elevGrid->getGridValueAt(i, j) == getNodataValue()) {
 				this->setGridValueAt(i, j, getNodataValue());	
 			} 
@@ -107,7 +111,7 @@ void View_Grid::lowerRightQuadAxes() {
 // and viewpoint coordinates. Returns 0 if the point is not
 // visible and 1 if the point is visible 
 int View_Grid::isVisible(int row, int col) {
-
+	
 	float LOS = getVerticalAngle(row, col, this->elevGrid->getGridValueAt(row,col)); // vertical angle of the line of sight between VP and P(row,col)
 	float slope = getSlope(row, col); // slope of the line between VP and P
 	float yIntercept = getYIntercept(slope); // line equation: col = row * slope + yIntercept
@@ -125,7 +129,7 @@ int View_Grid::isVisible(int row, int col) {
 	for (int j = this->getVPcol() + 1; j < col + 1; j++) {
 		float interR = getIntersection(slope, yIntercept, row, j);
 		float height = interpolate(interR, row, j);
-		if (getVerticalAngle(row, j, height) > LOS) return NOT_VISIBLE;
+		if (getVerticalAngle(row, j, height) >= LOS) return NOT_VISIBLE;
 	}
 
 	// check with horizontal intersections
@@ -133,7 +137,7 @@ int View_Grid::isVisible(int row, int col) {
 	for (int i = vp_row + 1; i < row + 1; i++) {
 		float interC = getIntersection(slope, yIntercept, i, col); 
 		float height = interpolate(interC, i, col);
-		if(getVerticalAngle(i, col, height) > LOS) return NOT_VISIBLE;
+		if(getVerticalAngle(i, col, height) >= LOS) return NOT_VISIBLE;
 	}
 	HORIZONTAL = false;
 
