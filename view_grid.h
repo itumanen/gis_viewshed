@@ -27,7 +27,7 @@ public:
 	void initialize();
 	void computeViewshed();
 	int isVisible(int row, int col);
-	int compareHeights(int row, int col);
+	void lowerRightQuadAxes();
 	float getVerticalAngle(int row, int col, float value);
 	float getSlope(int row, int col);
 	float getYIntercept(float slope);

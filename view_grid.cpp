@@ -58,6 +58,17 @@ void View_Grid::initialize() {
 void View_Grid::computeViewshed() {
 
 	// LOWER RIGHT QUADRANT
+	lowerRightQuadAxes();
+	for (int i = this->getVProw() + 1; i < this->getNumRows(); i++) {
+		for (int j = this->getVPcol() + 1; j < this->getNumCols(); j++) {
+			if (elevGrid->getGridValueAt(i, j) == getNodataValue()) this->setGridValueAt(i, j, getNodataValue());
+			this->setGridValueAt(i, j, isVisible(i, j));
+		}
+	}
+
+}
+
+void View_Grid::lowerRightQuadAxes() {
 	// set neighbors on VP row and col to visible
 	this->setGridValueAt(vp_row, vp_col + 1, VISIBLE);
 	this->setGridValueAt(vp_row + 1, vp_col, VISIBLE);
@@ -88,18 +99,6 @@ void View_Grid::computeViewshed() {
 	} 
 
 	HORIZONTAL = false;
-
-	for (int i = this->getVProw() + 1; i < this->getNumRows(); i++) {
-		for (int j = this->getVPcol() + 1; j < this->getNumCols(); j++) {
-			if (elevGrid->getGridValueAt(i, j) == getNodataValue()) this->setGridValueAt(i, j, getNodataValue());
-			this->setGridValueAt(i, j, isVisible(i, j));
-		}
-	}
-
-}
-
-int View_Grid::compareHeights(int row, int col) {
-	return (elevGrid->getGridValueAt(getVProw(), getVPcol()) > elevGrid->getGridValueAt(row,col));
 }
 
 // Interpolates between point at given row/col coordinates
