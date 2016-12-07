@@ -406,13 +406,7 @@ int View_Grid::isVisible(int row, int col, int quadrant) {
 // input value is elevation at comparison point
 float View_Grid::getVerticalAngle(float row, float col, float value) {
 
-	cout << "passed in to getvertical angle " << row << " " << col << " " << value << endl;
 	float distance = sqrt( pow(row - vp_row, 2) + pow(col - vp_col, 2) );
-	cout << "distance where row " << row << " col " << col << " is " << distance << endl;
-	if (HORIZONTAL) {
-		return atan((value - elevGrid->getGridValueAt(vp_row, vp_col)) 
-					/ distance);
-	}
 	return atan((value - elevGrid->getGridValueAt(this->getVProw(), this->getVPcol()))
 				/ distance);
 }
