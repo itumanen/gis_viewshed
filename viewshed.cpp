@@ -58,7 +58,6 @@ int main(int argc, char** argv) {
 
     printf("\n");
     viewGrid->printGrid();
-
     printf("Run time = %f\n", (float)timestamp / CLOCKS_PER_SEC);
 
     // Write viewshed grid info to output file 
