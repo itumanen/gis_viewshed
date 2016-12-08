@@ -153,20 +153,20 @@ void View_Grid::lowerRightQuadAxes() {
 	setGridValueAt(vp_row, vp_col + 1, VISIBLE);
 	setGridValueAt(vp_row + 1, vp_col, VISIBLE);
 
-	HORIZONTAL = true;
-	float LOS = getVerticalAngle(vp_row, vp_col + 1, this->elevGrid->getGridValueAt(vp_row, vp_col + 1));
-	for (int col = this->vp_col + 2; col < this->getNumCols(); col++) {
-		float verticalAngle = getVerticalAngle(vp_row, col, this->elevGrid->getGridValueAt(vp_row, col));
-		if(verticalAngle > LOS) {
-			this->setGridValueAt(vp_row, col, VISIBLE);
-			LOS = verticalAngle;
-			continue;
-		}
-		this->setGridValueAt(vp_row, col, NOT_VISIBLE);
-	} 
-	HORIZONTAL = false;
+	// HORIZONTAL = true;
+	// float LOS = getVerticalAngle(vp_row, vp_col + 1, this->elevGrid->getGridValueAt(vp_row, vp_col + 1));
+	// for (int col = this->vp_col + 2; col < this->getNumCols(); col++) {
+	// 	float verticalAngle = getVerticalAngle(vp_row, col, this->elevGrid->getGridValueAt(vp_row, col));
+	// 	if(verticalAngle > LOS) {
+	// 		this->setGridValueAt(vp_row, col, VISIBLE);
+	// 		LOS = verticalAngle;
+	// 		continue;
+	// 	}
+	// 	this->setGridValueAt(vp_row, col, NOT_VISIBLE);
+	// } 
+	// HORIZONTAL = false;
 
-	LOS = getVerticalAngle(getVProw() + 1, getVPcol(), this->elevGrid->getGridValueAt(getVProw() + 1, getVPcol()));
+	float LOS = getVerticalAngle(getVProw() + 1, getVPcol(), this->elevGrid->getGridValueAt(getVProw() + 1, getVPcol()));
 	for (int row = this->getVProw() + 2; row < this->getNumRows(); row++) {
 		float verticalAngle = getVerticalAngle(row, vp_col, this->elevGrid->getGridValueAt(row, vp_col));
 		if(verticalAngle > LOS) {
@@ -189,22 +189,22 @@ void View_Grid::lowerLeftQuadAxes() {
 	setGridValueAt(vp_row, vp_col - 1, VISIBLE);
 	setGridValueAt(vp_row + 1, vp_col, VISIBLE);
 
-	HORIZONTAL = true;
-	float LOS = getVerticalAngle(vp_row, vp_col - 1, this->elevGrid->getGridValueAt(vp_row, vp_col - 1));
-	for (int col = vp_col - 2; col > -1; col--) {
-		float verticalAngle = getVerticalAngle(vp_row, col, this->elevGrid->getGridValueAt(vp_row, col));
-		if(verticalAngle > LOS) {
-			setGridValueAt(vp_row, col, VISIBLE);
-			LOS = verticalAngle; // keep track of max vertical angle
-			continue;
-		}
-		setGridValueAt(vp_row, col, NOT_VISIBLE);
-	} 
-	HORIZONTAL = false;
+	// HORIZONTAL = true;
+	// float LOS = getVerticalAngle(vp_row, vp_col - 1, this->elevGrid->getGridValueAt(vp_row, vp_col - 1));
+	// for (int col = vp_col - 2; col > -1; col--) {
+	// 	float verticalAngle = getVerticalAngle(vp_row, col, this->elevGrid->getGridValueAt(vp_row, col));
+	// 	if(verticalAngle > LOS) {
+	// 		setGridValueAt(vp_row, col, VISIBLE);
+	// 		LOS = verticalAngle; // keep track of max vertical angle
+	// 		continue;
+	// 	}
+	// 	setGridValueAt(vp_row, col, NOT_VISIBLE);
+	// } 
+	// HORIZONTAL = false;
 
 	if (!redundant) {
 
-		LOS = getVerticalAngle(getVProw() + 1, getVPcol(), this->elevGrid->getGridValueAt(getVProw() + 1, getVPcol()));
+		float LOS = getVerticalAngle(getVProw() + 1, getVPcol(), this->elevGrid->getGridValueAt(getVProw() + 1, getVPcol()));
 		for (int row = this->getVProw() + 2; row < this->getNumRows(); row++) {
 			float verticalAngle = getVerticalAngle(row, vp_col, this->elevGrid->getGridValueAt(row, vp_col));
 			if(verticalAngle > LOS) {
@@ -242,18 +242,18 @@ void View_Grid::upperLeftQuadAxes() {
 
 	if (!redundant) {
 
-		HORIZONTAL = true;
-		float LOS = getVerticalAngle(vp_row, vp_col - 1, this->elevGrid->getGridValueAt(vp_row, vp_col - 1));
-		for (int col = vp_col - 2; col > -1; col--) {
-			float verticalAngle = getVerticalAngle(vp_row, col, this->elevGrid->getGridValueAt(vp_row, col));
-			if(verticalAngle > LOS) {
-				this->setGridValueAt(vp_row, col, VISIBLE);
-				LOS = verticalAngle;
-				continue;
-			}
-			this->setGridValueAt(vp_row, col, NOT_VISIBLE);
-		} 
-		HORIZONTAL = false;
+		// HORIZONTAL = true;
+		// float LOS = getVerticalAngle(vp_row, vp_col - 1, this->elevGrid->getGridValueAt(vp_row, vp_col - 1));
+		// for (int col = vp_col - 2; col > -1; col--) {
+		// 	float verticalAngle = getVerticalAngle(vp_row, col, this->elevGrid->getGridValueAt(vp_row, col));
+		// 	if(verticalAngle > LOS) {
+		// 		this->setGridValueAt(vp_row, col, VISIBLE);
+		// 		LOS = verticalAngle;
+		// 		continue;
+		// 	}
+		// 	this->setGridValueAt(vp_row, col, NOT_VISIBLE);
+		// } 
+		// HORIZONTAL = false;
 
 	}
 
@@ -335,21 +335,21 @@ int View_Grid::isVisible(int row, int col, int quadrant) {
 		}
 
 		// check with horizontal intersections
-		HORIZONTAL = true;
-		for (int i = vp_row + 1; i < row; i++) {
-			float interC = getIntersection(slope, yIntercept, i, col);
-			float height = checkNodataInterpolate(row, interC);
-			if (height == nodata_value) {
-				continue;
-			}
-			else if (height == nodata_value - 1) {
-				height = interpolate(interC, i, col);
-			}
-			float verticalAngle = getVerticalAngle(row, interC, height);
-			if (verticalAngle > LOS) return NOT_VISIBLE;
-		}
-		HORIZONTAL = false;
-		return VISIBLE;
+		// HORIZONTAL = true;
+		// for (int i = vp_row + 1; i < row; i++) {
+		// 	float interC = getIntersection(slope, yIntercept, i, col);
+		// 	float height = checkNodataInterpolate(row, interC);
+		// 	if (height == nodata_value) {
+		// 		continue;
+		// 	}
+		// 	else if (height == nodata_value - 1) {
+		// 		height = interpolate(interC, i, col);
+		// 	}
+		// 	float verticalAngle = getVerticalAngle(row, interC, height);
+		// 	if (verticalAngle > LOS) return NOT_VISIBLE;
+		// }
+		// HORIZONTAL = false;
+		// return VISIBLE;
 	}
 
 	if (quadrant == LOWER_LEFT) {
@@ -366,20 +366,20 @@ int View_Grid::isVisible(int row, int col, int quadrant) {
 		}
 
 		// check with horizontal intersections
-		HORIZONTAL = true;
-		for (int i = vp_row + 1; i < row; i++) {
-			float interC = getIntersection(slope, yIntercept, i, col); 
-			float height = checkNodataInterpolate(row, interC);
-			if (height == nodata_value) {
-				continue;
-			}
-			else if (height == nodata_value - 1) {
-				height = interpolate(interC, i, col);
-			}
-			float verticalAngle = getVerticalAngle(i, interC, height);
-			if(verticalAngle > LOS) return NOT_VISIBLE;
-		}
-		HORIZONTAL = false;
+		// HORIZONTAL = true;
+		// for (int i = vp_row + 1; i < row; i++) {
+		// 	float interC = getIntersection(slope, yIntercept, i, col); 
+		// 	float height = checkNodataInterpolate(row, interC);
+		// 	if (height == nodata_value) {
+		// 		continue;
+		// 	}
+		// 	else if (height == nodata_value - 1) {
+		// 		height = interpolate(interC, i, col);
+		// 	}
+		// 	float verticalAngle = getVerticalAngle(i, interC, height);
+		// 	if(verticalAngle > LOS) return NOT_VISIBLE;
+		// }
+		// HORIZONTAL = false;
 
 		if (DEBUG) cout << "visible" << endl;
 		return VISIBLE;
@@ -399,20 +399,20 @@ int View_Grid::isVisible(int row, int col, int quadrant) {
 		}
 
 		// check with horizontal intersections
-		HORIZONTAL = true;
-		for (int i = vp_row - 1; i > row; i--) {
-			float interC = getIntersection(slope, yIntercept, i, col); 
-			float height = checkNodataInterpolate(row, interC);
-			if (height == nodata_value) {
-				continue;
-			}
-			else if (height == nodata_value - 1) {
-				height = interpolate(interC, i, col);
-			}
-			float verticalAngle = getVerticalAngle(i, interC, height);
-			if(verticalAngle > LOS) return NOT_VISIBLE;
-		}
-		HORIZONTAL = false;
+		// HORIZONTAL = true;
+		// for (int i = vp_row - 1; i > row; i--) {
+		// 	float interC = getIntersection(slope, yIntercept, i, col); 
+		// 	float height = checkNodataInterpolate(row, interC);
+		// 	if (height == nodata_value) {
+		// 		continue;
+		// 	}
+		// 	else if (height == nodata_value - 1) {
+		// 		height = interpolate(interC, i, col);
+		// 	}
+		// 	float verticalAngle = getVerticalAngle(i, interC, height);
+		// 	if(verticalAngle > LOS) return NOT_VISIBLE;
+		// }
+		// HORIZONTAL = false;
 
 		if (DEBUG) cout << "visible" << endl;
 		return VISIBLE;
@@ -432,19 +432,19 @@ int View_Grid::isVisible(int row, int col, int quadrant) {
 		}
 
 		// check with horizontal intersections
-		HORIZONTAL = true;
-		for (int i = vp_row - 1; i > row; i--) {
-			float interC = getIntersection(slope, yIntercept, i, col); 
-			float height = checkNodataInterpolate(row, interC);
-			if (height == nodata_value) {
-				continue;
-			}
-			else if (height == nodata_value - 1) {
-				height = interpolate(interC, i, col);
-			}
-			if(getVerticalAngle(i, interC, height) > LOS) return NOT_VISIBLE;
-		}
-		HORIZONTAL = false;
+		// HORIZONTAL = true;
+		// for (int i = vp_row - 1; i > row; i--) {
+		// 	float interC = getIntersection(slope, yIntercept, i, col); 
+		// 	float height = checkNodataInterpolate(row, interC);
+		// 	if (height == nodata_value) {
+		// 		continue;
+		// 	}
+		// 	else if (height == nodata_value - 1) {
+		// 		height = interpolate(interC, i, col);
+		// 	}
+		// 	if(getVerticalAngle(i, interC, height) > LOS) return NOT_VISIBLE;
+		// }
+		// HORIZONTAL = false;
 		return VISIBLE;
 	}
 
