@@ -170,11 +170,11 @@ void Grid::writeGridToFile(char* fileName) {
 	outputFile << "xllcorner " << this->xllCorner << "\n";
 	outputFile << "yllcorner " << this->yllCorner << "\n";
 	outputFile << "cellsize " << this->cellSize << "\n";
-	outputFile << "NODATA_value " << this->nodata_value << "\n\n";
+	outputFile << "NODATA_value " << this->nodata_value << "\n";
 	
 	for (int row = 0; row < this->numRows; row++) {
 		for (int col = 0; col < this->numCols; col++) {
-			outputFile << this->gridVals[row][col] << "  ";
+			outputFile << this->gridVals[row][col] << " ";
 		}
 		outputFile << "\n";
 	}

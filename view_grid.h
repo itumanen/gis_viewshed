@@ -46,6 +46,8 @@ public:
 	void upperRightQuadAxes();
 	
 	// Helper methods
+	bool checkNoData(float row, float col);
+	float checkNodataInterpolate(float row, float col);
 	float getVerticalAngle(float row, float col, float value);
 	float getSlope(int row, int col);
 	float getYIntercept(float slope);

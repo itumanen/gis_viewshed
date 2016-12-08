@@ -323,16 +323,30 @@ int View_Grid::isVisible(int row, int col, int quadrant) {
 	if (quadrant == LOWER_RIGHT) {
 		for (int j = this->getVPcol() + 1; j < col; j++) {
 			float interR = getIntersection(slope, yIntercept, row, j);
-			float height = interpolate(interR, row, j);
-			if (getVerticalAngle(interR, j, height) >= LOS) return NOT_VISIBLE;
+			float height = checkNodataInterpolate(interR, col);
+			if (height == nodata_value) {
+				continue;
+			}
+			else if (height == nodata_value - 1) {
+				height = interpolate(interR, row, j);
+			}
+			float verticalAngle = getVerticalAngle(interR, j, height);
+			if (verticalAngle > LOS) return NOT_VISIBLE;
 		}
 
 		// check with horizontal intersections
 		HORIZONTAL = true;
 		for (int i = vp_row + 1; i < row; i++) {
-			float interC = getIntersection(slope, yIntercept, i, col); 
-			float height = interpolate(interC, i, col);
-			if(getVerticalAngle(i, interC, height) >= LOS) return NOT_VISIBLE;
+			float interC = getIntersection(slope, yIntercept, i, col);
+			float height = checkNodataInterpolate(row, interC);
+			if (height == nodata_value) {
+				continue;
+			}
+			else if (height == nodata_value - 1) {
+				height = interpolate(interC, i, col);
+			}
+			float verticalAngle = getVerticalAngle(row, interC, height);
+			if (verticalAngle > LOS) return NOT_VISIBLE;
 		}
 		HORIZONTAL = false;
 		return VISIBLE;
@@ -341,16 +355,29 @@ int View_Grid::isVisible(int row, int col, int quadrant) {
 	if (quadrant == LOWER_LEFT) {
 		for (int j = this->getVPcol() - 1; j > col; j--) {
 			float interR = getIntersection(slope, yIntercept, row, j);
-			float height = interpolate(interR, row, j);
-			if (getVerticalAngle(interR, j, height) >= LOS) return NOT_VISIBLE;
+			float height = checkNodataInterpolate(interR, col);
+			if(height == nodata_value) {
+				continue;
+			}
+			else if (height == nodata_value - 1) {
+				height = interpolate(interR, row, j);
+			}
+			if (getVerticalAngle(interR, j, height) > LOS) return NOT_VISIBLE;
 		}
 
 		// check with horizontal intersections
 		HORIZONTAL = true;
 		for (int i = vp_row + 1; i < row; i++) {
 			float interC = getIntersection(slope, yIntercept, i, col); 
-			float height = interpolate(interC, i, col);
-			if(getVerticalAngle(i, interC, height) >= LOS) return NOT_VISIBLE;
+			float height = checkNodataInterpolate(row, interC);
+			if (height == nodata_value) {
+				continue;
+			}
+			else if (height == nodata_value - 1) {
+				height = interpolate(interC, i, col);
+			}
+			float verticalAngle = getVerticalAngle(i, interC, height);
+			if(verticalAngle > LOS) return NOT_VISIBLE;
 		}
 		HORIZONTAL = false;
 
@@ -361,16 +388,29 @@ int View_Grid::isVisible(int row, int col, int quadrant) {
 	if (quadrant == UPPER_LEFT) {
 		for (int j = this->vp_col - 1; j > col; j--) {
 			float interR = getIntersection(slope, yIntercept, row, j);
-			float height = interpolate(interR, row, j);
-			if (getVerticalAngle(interR, j, height) >= LOS) return NOT_VISIBLE;
+			float height = checkNodataInterpolate(interR, col);
+			if (height == nodata_value) {
+				continue;
+			}
+			else if (height == nodata_value - 1) {
+				height = interpolate(interR, row, j);
+			}
+			if (getVerticalAngle(interR, j, height) > LOS) return NOT_VISIBLE;
 		}
 
 		// check with horizontal intersections
 		HORIZONTAL = true;
 		for (int i = vp_row - 1; i > row; i--) {
 			float interC = getIntersection(slope, yIntercept, i, col); 
-			float height = interpolate(interC, i, col);
-			if(getVerticalAngle(i, interC, height) >= LOS) return NOT_VISIBLE;
+			float height = checkNodataInterpolate(row, interC);
+			if (height == nodata_value) {
+				continue;
+			}
+			else if (height == nodata_value - 1) {
+				height = interpolate(interC, i, col);
+			}
+			float verticalAngle = getVerticalAngle(i, interC, height);
+			if(verticalAngle > LOS) return NOT_VISIBLE;
 		}
 		HORIZONTAL = false;
 
@@ -381,22 +421,80 @@ int View_Grid::isVisible(int row, int col, int quadrant) {
 	if (quadrant == UPPER_RIGHT) {
 		for (int j = this->getVPcol() + 1; j < col; j++) {
 			float interR = getIntersection(slope, yIntercept, row, j);
-			float height = interpolate(interR, row, j);
-			if (getVerticalAngle(interR, j, height) >= LOS) return NOT_VISIBLE;
+			float height = checkNodataInterpolate(interR, col);
+			if (height == nodata_value) {
+				continue;
+			}
+			else if (height == nodata_value - 1) {
+				height = interpolate(interR, row, j);
+			}
+			if (getVerticalAngle(interR, j, height) > LOS) return NOT_VISIBLE;
 		}
 
 		// check with horizontal intersections
 		HORIZONTAL = true;
 		for (int i = vp_row - 1; i > row; i--) {
 			float interC = getIntersection(slope, yIntercept, i, col); 
-			float height = interpolate(interC, i, col);
-			if(getVerticalAngle(i, interC, height) >= LOS) return NOT_VISIBLE;
+			float height = checkNodataInterpolate(row, interC);
+			if (height == nodata_value) {
+				continue;
+			}
+			else if (height == nodata_value - 1) {
+				height = interpolate(interC, i, col);
+			}
+			if(getVerticalAngle(i, interC, height) > LOS) return NOT_VISIBLE;
 		}
 		HORIZONTAL = false;
 		return VISIBLE;
 	}
 
 	return VISIBLE;
+}
+
+float View_Grid::checkNodataInterpolate(float row, float col) {
+	int count = 0;
+	float height = 0;
+
+	if (HORIZONTAL) {
+		if (elevGrid->getGridValueAt(row, floor(col)) == nodata_value) {
+			count++;
+		}
+		else {
+			height += getGridValueAt(row, floor(col));
+		}
+		if (elevGrid->getGridValueAt(row, ceil(col)) == nodata_value) {
+			count++;
+		}
+		else {
+			height += getGridValueAt(row, floor(col));
+		}
+	}
+
+	else {
+		if (elevGrid->getGridValueAt(floor(row), col) == nodata_value) {
+			count++;
+		}
+		else {
+			height += elevGrid->getGridValueAt(floor(row), col);
+		}
+		if(elevGrid->getGridValueAt(ceil(row), col) == nodata_value) {
+			count++;
+		}
+		else {
+			height += elevGrid->getGridValueAt(floor(row), col);
+		}
+	}
+
+	if (count == 0) {
+		return nodata_value - 1;
+	}
+	else if (count == 1) {
+		return height;
+	} else if (count == 2) {
+		return nodata_value;
+	}
+
+	return nodata_value;
 }
 
 // compute tan x, where x is the angle formed by viewpoint elevation
