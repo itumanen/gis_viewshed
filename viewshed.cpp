@@ -42,6 +42,12 @@ int main(int argc, char** argv) {
         printf("INVALID INPUT! Exiting.\n"); fflush(stdout);
         return(EXIT_FAILURE);
     }
+    if (elevGrid->getGridValueAt(vp_row, vp_col) == elevGrid->getNodataValue()) {
+        printf("INVALID VP: value is nodata.\n"); fflush(stdout);
+        return(EXIT_FAILURE);
+    }
+
+    printf("Elevation at VP %f\n", elevGrid->getGridValueAt(vp_row, vp_col)); fflush(stdout);
 
     // Viewshed grid
     viewGrid = new View_Grid(elevGrid, vp_row, vp_col);
