@@ -2,8 +2,10 @@
 #include <math.h>
 
 bool HORIZONTAL = false; 
-bool DEBUG = false;
+bool DEBUG = true;
 bool DEBUG_I = false;
+int DEBUG_ROW = 106;
+int DEBUG_COL = 200;
 
 // CONSTRUCTOR 
 // Reads in values from elevation grid
@@ -60,26 +62,30 @@ void View_Grid::computeViewshed() {
 	// LOWER RIGHT QUADRANT
 	if (vp_row < numRows - 1 && vp_col < numCols - 1) {
 		lowerRightQuadAxes();
+		cout << "LOWER RIGHT QUAD" << endl;
 		lowerRightQuad();
 	}
 
 	// // LOWER LEFT QUADRANT
-	if (vp_row < numRows - 1 && vp_col > 0) {
-		lowerLeftQuadAxes();
-		lowerLeftQuad();
-	}
+	// if (vp_row < numRows - 1 && vp_col > 0) {
+	// 	lowerLeftQuadAxes();
+	// 	cout << "LOWER LEFT QUAD " << endl;
+	// 	lowerLeftQuad();
+	// }
 
-	// UPPER LEFT QUADRANT
-	if(vp_row > 0 && vp_col > 0) {
-		upperLeftQuadAxes();
-		upperLeftQuad();
-	}
+	// // UPPER LEFT QUADRANT
+	// if(vp_row > 0 && vp_col > 0) {
+	// 	upperLeftQuadAxes();
+	// 	cout << "UPPER LEFT QUAD " << endl;
+	// 	upperLeftQuad();
+	// }
 
-	// // UPPER RIGHT QUADRANT
-	if (vp_row > 0 && vp_col < numCols - 1) {
-		upperRightQuadAxes();
-		upperRightQuad();
-	}
+	// // // UPPER RIGHT QUADRANT
+	// if (vp_row > 0 && vp_col < numCols - 1) {
+	// 	upperRightQuadAxes();
+	// 	cout << "UPPER RIGHT QUAD " << endl;
+	// 	upperRightQuad();
+	// }
 
 	setGridValueAt(vp_row, vp_col, VISIBLE);
 
@@ -307,12 +313,14 @@ void View_Grid::upperRightQuadAxes() {
 // and viewpoint coordinates. Returns 0 if the point is not
 // visible and 1 if the point is visible 
 int View_Grid::isVisible(int row, int col, int quadrant) {
-	
+
+	// printf("row %d, col %d, value %f\n", row, col, elevGrid->getGridValueAt(row, col)); fflush(stdout);
+
 	float LOS = getVerticalAngle(row, col, this->elevGrid->getGridValueAt(row,col)); // vertical angle of the line of sight between VP and P(row,col)
 	float slope = getSlope(row, col); // slope of the line between VP and P
 	float yIntercept = getYIntercept(slope); // line equation: col = row * slope + yIntercept
 
-	if (DEBUG) { 
+	if (DEBUG && row > DEBUG_ROW && col > DEBUG_COL) { 
 		printf("\nslope is %f at %d, %d\n", slope, row, col); fflush(stdout);
 		printf("yIntercept is %f at %d, %d\n", yIntercept, row, col); fflush(stdout);
 	}
@@ -324,33 +332,64 @@ int View_Grid::isVisible(int row, int col, int quadrant) {
 
 	if (quadrant == LOWER_RIGHT) {
 		for (int j = this->getVPcol() + 1; j < col; j++) {
+
+			if (DEBUG && row > DEBUG_ROW && col > DEBUG_COL) {
+
+				printf("col value in lower right quad vertical for loop %d\n",j); fflush(stdout);
+				printf("slope %f, yIntercept %f, row %d ", slope, yIntercept, row); fflush(stdout);
+				printf("interR should be %f\n", slope * j + yIntercept); fflush(stdout);
+
+			}
 			float interR = getIntersection(slope, yIntercept, row, j);
-			float height = checkNodataInterpolate(interR, col);
-			if (height == nodata_value) {
-				continue;
+			if (DEBUG && row > DEBUG_ROW && col > DEBUG_COL) {
+				printf("interR is %f\n", interR); fflush(stdout);
 			}
-			else if (height == nodata_value - 1) {
-				height = interpolate(interR, row, j);
+			// float height = checkNodataInterpolate(interR, col);
+			// if (DEBUG && row > 101 && col > 202) {
+			// 	cout << "height from checkNodataInterpolate is " << height << endl; // THIS LINE WAS CAUSING SEGFAULTS
+			// }
+			// if (height == nodata_value) {
+			// 	continue;
+			// }
+
+			float height = interpolate(interR, row, j);
+			if (DEBUG && row > DEBUG_ROW && col > DEBUG_COL) {
+				printf("updated height is %f\n", height); fflush(stdout);
 			}
+
+
+			// else if (height == nodata_value - 1) {
+			// 	height = interpolate(interR, row, j);
+
+			// }
 			float verticalAngle = getVerticalAngle(interR, j, height);
-			if (verticalAngle > LOS) return NOT_VISIBLE;
+
+			if (DEBUG && row > DEBUG_ROW && col > DEBUG_COL) {
+				printf("interR %f, height %f, verticalAngle %f \n", interR, height, verticalAngle); fflush(stdout);
+				cout << "interR " << interR << " height " << height << " verticalAngle " << verticalAngle << endl;
+			}
+			if (verticalAngle > LOS) { 
+				if (DEBUG && row > DEBUG_ROW && col > DEBUG_COL) cout << "RETURNING NOT VISIBLE" << endl;
+				return NOT_VISIBLE;
+			}
 		}
 
 		// check with horizontal intersections
-		HORIZONTAL = true;
-		for (int i = vp_row + 1; i < row; i++) {
-			float interC = getIntersection(slope, yIntercept, i, col);
-			float height = checkNodataInterpolate(row, interC);
-			if (height == nodata_value) {
-				continue;
-			}
-			else if (height == nodata_value - 1) {
-				height = interpolate(interC, i, col);
-			}
-			float verticalAngle = getVerticalAngle(row, interC, height);
-			if (verticalAngle > LOS) return NOT_VISIBLE;
-		}
-		HORIZONTAL = false;
+		// HORIZONTAL = true;
+		// for (int i = vp_row + 1; i < row; i++) {
+		// 	float interC = getIntersection(slope, yIntercept, i, col);
+		// 	float height = checkNodataInterpolate(row, interC);
+		// 	if (height == nodata_value) {
+		// 		continue;
+		// 	}
+		// 	else if (height == nodata_value - 1) {
+		// 		height = interpolate(interC, i, col);
+		// 	}
+		// 	float verticalAngle = getVerticalAngle(row, interC, height);
+		// 	if (verticalAngle > LOS) return NOT_VISIBLE;
+		// }
+		// HORIZONTAL = false;
+
 		return VISIBLE;
 	}
 
@@ -386,7 +425,7 @@ int View_Grid::isVisible(int row, int col, int quadrant) {
 		}
 		HORIZONTAL = false;
 
-		if (DEBUG) cout << "visible" << endl;
+		// if (DEBUG) cout << "visible" << endl;
 		return VISIBLE;
 	}
 
@@ -451,7 +490,7 @@ int View_Grid::isVisible(int row, int col, int quadrant) {
 		HORIZONTAL = false;
 		if (row == 0 && col == 0) cout << "SWITCHED HORIZONTAL TO FALSE" << endl;
 
-		if (DEBUG) cout << "visible" << endl;
+		// if (DEBUG) cout << "visible" << endl;
 		return VISIBLE;
 	}
 
@@ -547,11 +586,18 @@ float View_Grid::getVerticalAngle(float row, float col, float value) {
 }
 
 float View_Grid::interpolate(float index, int row, int col) {
+	if (DEBUG && row > DEBUG_ROW && col > DEBUG_COL) {
+		printf("IN INTERPOLATE METHOD\n"); fflush(stdout);
+		printf("index is %f, row %d, col %d\n", index, row, col); fflush(stdout);
+		printf("ceil(index) %f and floor(index) %f\n", ceil(index), floor(index)); fflush(stdout);
+	}
 	if (HORIZONTAL) {
 		return ((this->elevGrid->getGridValueAt(row, ceil(index)) - this->elevGrid->getGridValueAt(row, floor(index)))
 			* (index - floor(index)))
 			+ this->elevGrid->getGridValueAt(row, floor(index));
 	}
+
+
 	return ((this->elevGrid->getGridValueAt(ceil(index), col) - this->elevGrid->getGridValueAt(floor(index), col))
 			* (index - floor(index)))
 			+ this->elevGrid->getGridValueAt(floor(index), col);
@@ -560,7 +606,10 @@ float View_Grid::interpolate(float index, int row, int col) {
 
 // Returns second coordinate of intersection point on a vertical axis
 float View_Grid::getIntersection(float slope, float yIntercept, int row, int col) {
-	if(HORIZONTAL) return (row - yIntercept) / slope;
+	if(HORIZONTAL) {
+		cout << "horizontal is true" << endl;
+		return (row - yIntercept) / slope;
+	}
 	return slope * col + yIntercept;
 }
 
@@ -572,5 +621,5 @@ float View_Grid::getSlope(int row, int col) {
 
 // Computes y-intercept of equation of line through VP and p using the slope
 float View_Grid::getYIntercept(float slope) {
-	return getVPcol() - getVProw() * slope;
+	return vp_row - vp_col * slope;
 }
