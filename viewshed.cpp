@@ -39,7 +39,7 @@ int main(int argc, char** argv) {
     // catch invalid inputs
     if (vp_row < 0 || vp_row >= elevGrid->getNumRows() ||
         vp_col < 0 || vp_col >= elevGrid->getNumCols() ) {
-        printf("INVALID INPUT! Exiting.\n"); fflush(stdout);
+        printf("INVALID INPUT! Indices out of range; exiting.\n"); fflush(stdout);
         return(EXIT_FAILURE);
     }
     if (elevGrid->getGridValueAt(vp_row, vp_col) == elevGrid->getNodataValue()) {
@@ -64,7 +64,7 @@ int main(int argc, char** argv) {
 
     printf("\n");
     // viewGrid->printGrid();
-    printf("Run time = %f\n", (float)timestamp / CLOCKS_PER_SEC);
+    printf("Run time = %f\n", static_cast<float>(timestamp) / CLOCKS_PER_SEC);
 
     // Write viewshed grid info to output file 
     viewGrid->writeGridToFile(outputView);
